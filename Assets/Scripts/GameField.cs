@@ -28,10 +28,10 @@ public class GameField : MonoBehaviour
             this.horizontal = horizontal;
         }
 
-        int column;
-        int row;
-        int length;
-        bool horizontal;
+        public int column;
+        public int row;
+        public int length;
+        public bool horizontal;
     }
 
     struct Move
@@ -58,8 +58,16 @@ public class GameField : MonoBehaviour
     private void Start()
     {
         GenerateLevel();
+        
         FindClusters();
-        FindMoves();
+
+        if (clusters.Count == 0)
+        {
+            Debug.Log("There is no cluster, finding moves...");
+            FindMoves();
+
+        }
+        
     }
 
     private void GenerateLevel()
@@ -80,6 +88,9 @@ public class GameField : MonoBehaviour
                 }
             }
 
+            // Move the grid to the center
+            Vector2 gridSize = new Vector2(fieldSize.x * spacing, fieldSize.y * spacing);
+            transform.position = new Vector2(-gridSize.x / 2 + spacing / 2, -(gridSize.y / 2 - spacing / 2));
 
             /*
             ResolveClusters();
@@ -91,13 +102,12 @@ public class GameField : MonoBehaviour
                 done = true;
             }
             */
+
             // убрать потом
             done = true;
         }
 
-        // Move the grid to the center
-        Vector2 gridSize = new Vector2(fieldSize.x * spacing, fieldSize.y * spacing); 
-        transform.position = new Vector2(-gridSize.x / 2 + spacing / 2, -(gridSize.y / 2 - spacing / 2));
+
     }
     private void ResolveClusters()
     {
@@ -201,6 +211,8 @@ public class GameField : MonoBehaviour
     private void Swap(int x1, int y1, int x2, int y2)
     {
         var typeSwap = tiles[x1, y1].Type;
+        //if (tiles[x2, y2].Type)
+
         tiles[x1, y1].Type = tiles[x2, y2].Type;
         tiles[x2, y2].Type = typeSwap;
     }
@@ -210,7 +222,7 @@ public class GameField : MonoBehaviour
         // Horizontal swaps
         for (int j = 0; j < fieldSize.y - 1; j++)
         {
-            for (int i = 0; i < fieldSize.y - 1; i++)
+            for (int i = 0; i < fieldSize.x - 1; i++)
             {
                 Swap(i, j, i + 1, j);
                 FindClusters();
@@ -227,7 +239,7 @@ public class GameField : MonoBehaviour
         }
         
         // Vertical swaps
-        for (int i = 0; i < fieldSize.y - 1; i++)
+        for (int i = 0; i < fieldSize.x - 1; i++)
         {
             for (int j = 0; j < fieldSize.y - 1; j++)
             {
@@ -255,7 +267,19 @@ public class GameField : MonoBehaviour
 
     private void RemoveClusters()
     {
-        Debug.Log("Remove Clusters not implemented");
+        for (int i = 0; i < clusters.Count; i++)
+        {
+            var cluster = clusters[i];
+            Vector2 offset = new Vector2(0, 0);
+
+            for (var j = 0; j < cluster.length; j++)
+            {
+                // do that thing 
+
+                
+            }
+        }
+
     }
 
 

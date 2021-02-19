@@ -400,7 +400,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94a92c1f4ae11dd47848cfb0b6d95e02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fieldSize: {x: 6, y: 8}
+  fieldSize: {x: 5, y: 5}
   tileElement:
   - {fileID: 11400000, guid: cd4f506e53291fb4ab85241453d93985, type: 2}
   - {fileID: 11400000, guid: bde57ebb5ebb5934787244dcb22170c6, type: 2}
