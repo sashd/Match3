@@ -4,6 +4,7 @@ using UnityEngine;
 
 public enum TileType
 {
+    empty,
     apple,
     milk,
     greenGuy,

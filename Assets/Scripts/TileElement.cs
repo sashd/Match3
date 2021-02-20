@@ -28,4 +28,15 @@ public class TileElement : MonoBehaviour
         
     }
 
+    public void Break()
+    {
+        Debug.Log("i am break");
+        type = TileType.empty;
+
+        Color color = spriteRenderer.color;
+        color.a = 0.3f;
+        spriteRenderer.color = color;
+        //Destroy(gameObject);
+    }
+
 }
