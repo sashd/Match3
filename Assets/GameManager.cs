@@ -38,10 +38,9 @@ public class GameManager : MonoBehaviour
             {
                 level.DestroyAll();
             }
+            moves.Clear();
+            clusters.Clear();
         }
-
-        clusters.Clear();
-
     }
 
     private void FindClusters()
@@ -133,8 +132,6 @@ public class GameManager : MonoBehaviour
     private void Swap(int x1, int y1, int x2, int y2)
     {
         var typeSwap = tiles[x1, y1].Type;
-        //if (tiles[x2, y2].Type)
-
         tiles[x1, y1].Type = tiles[x2, y2].Type;
         tiles[x2, y2].Type = typeSwap;
     }
@@ -142,7 +139,7 @@ public class GameManager : MonoBehaviour
     private void FindMoves()
     {
         // Horizontal swaps
-        for (int j = 0; j < level.fieldSize.y - 1; j++)
+        for (int j = 0; j < level.fieldSize.y; j++)
         {
             for (int i = 0; i < level.fieldSize.x - 1; i++)
             {
@@ -155,13 +152,13 @@ public class GameManager : MonoBehaviour
                 {
                     Move move = new Move(i, j, i + 1, j);
                     moves.Add(move);
-                    //Debug.Log("move: (" + i + "," + j + ") -> (" + (i + 1) + "," + j + ") Horizontal swap");
+                    Debug.Log("move: (" + i + "," + j + ") -> (" + (i + 1) + "," + j + ") Horizontal swap");
                 }
             }
         }
 
         // Vertical swaps
-        for (int i = 0; i < level.fieldSize.x - 1; i++)
+        for (int i = 0; i < level.fieldSize.x; i++)
         {
             for (int j = 0; j < level.fieldSize.y - 1; j++)
             {
@@ -174,7 +171,7 @@ public class GameManager : MonoBehaviour
                 {
                     Move move = new Move(i, j, i, j + 1);
                     moves.Add(move);
-                    //Debug.Log("move: (" + i + "," + j + ") -> (" + i + "," + (j + 1) + ") Vertical swap");
+                    Debug.Log("move: (" + i + "," + j + ") -> (" + i + "," + (j + 1) + ") Vertical swap");
                 }
             }
         }

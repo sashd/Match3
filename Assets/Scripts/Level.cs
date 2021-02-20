@@ -60,11 +60,6 @@ public class Level: MonoBehaviour
                     tiles[cluster.column, cluster.row + i].Init(tileElements[randomElement]);
                 }
             }
-
         }
-
     }
-
-
-
 }
