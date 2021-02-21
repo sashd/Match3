@@ -22,18 +22,20 @@ public class TileElement : MonoBehaviour
     {
         Type = TileType.empty;
 
-        Color color = spriteRenderer.color;
-        color.a = 0.3f;
-        spriteRenderer.color = color;
-        //Destroy(gameObject);
+        // return to pool
+        Destroy(gameObject);
     }
 
-    public void Move(Vector3 position)
+    public void Move(Vector3 position, int x, int y)
     {
         StartCoroutine(MoveFromTo(transform.position, position, moveSpeed));
+
+        // Change indices info
+        indices.x = x;
+        indices.y = y;
     }
 
-    IEnumerator MoveFromTo(Vector3 from, Vector3 to, float speed)
+    private IEnumerator MoveFromTo(Vector3 from, Vector3 to, float speed)
     {
         float step = (speed / (from - to).magnitude) * Time.fixedDeltaTime;
         float t = 0;

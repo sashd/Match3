@@ -8,6 +8,8 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField] private Level level;
 
+    [Min(1)]
+    [SerializeField] private float swapBackDelay = 0.5f;
     [SerializeField] private float hintTime = 5f;
 
     private const int maxSize = 20;
@@ -45,7 +47,8 @@ public class GameManager : MonoBehaviour
             clusters.Clear();
         }
 
-        MakeMove(0,0,1,0);
+        // ------------ TEST ----------------
+        StartCoroutine(MakeMove(0,0,0,1));
     }
 
     private void FindClusters()
@@ -136,9 +139,9 @@ public class GameManager : MonoBehaviour
 
     private void Swap(int x1, int y1, int x2, int y2)
     {
-        TileType typeSwap = tiles[x1, y1].Type;
-        tiles[x1, y1].Type = tiles[x2, y2].Type;
-        tiles[x2, y2].Type = typeSwap;
+        TileElement temp = tiles[x1, y1];
+        tiles[x1, y1] = tiles[x2, y2];
+        tiles[x2, y2] = temp;
     }
 
     private void FindMoves()
@@ -184,23 +187,48 @@ public class GameManager : MonoBehaviour
         clusters.Clear();
     }
 
-    private void MakeMove(int x1, int y1, int x2, int y2)
+    private IEnumerator MakeMove(int x1, int y1, int x2, int y2)
     {
-        tiles[x1, y1].Move(tiles[x2, y2].transform.position);
-        tiles[x2, y2].Move(tiles[x1, y1].transform.position);
+        tiles[x1, y1].Move(tiles[x2, y2].transform.position, x2, y2);
+        tiles[x2, y2].Move(tiles[x1, y1].transform.position, x1, y1);
+        Swap(x1, y1, x2, y2);
 
-        
-        TileElement temp = tiles[x1, y1];
-        tiles[x1, y1] = tiles[x2, y2];
-        tiles[x2, y2]= temp;
-        
+        FindClusters();
 
-        Debug.Log(tiles[0,0].Type);
+        if (clusters.Count > 0)
+        {
+            // If after the move cluster was formed
+            ResolveClusters();
+        }
+        else
+        {
+            yield return new WaitForSeconds(swapBackDelay);
 
-
+            // Return tiles to their previous position
+            tiles[x1, y1].Move(tiles[x2, y2].transform.position, x2, y2);
+            tiles[x2, y2].Move(tiles[x1, y1].transform.position, x1, y1);
+            Swap(x1, y1, x2, y2);
+        }
     }
 
+    private void ResolveClusters()
+    {
+        Debug.Log("resolve clusters");
 
-
-
+        foreach (Cluster cluster in clusters)
+        {
+            // destroy all tiles in the cluster
+            for (int i = 0; i < cluster.length; i++)
+            {
+                if (cluster.horizontal)
+                {
+                    tiles[cluster.column + i, cluster.row].Break();
+                }
+                else
+                {
+                    tiles[cluster.column, cluster.row + i].Break();
+                }
+            }
+        }
+    }
 }
