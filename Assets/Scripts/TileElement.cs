@@ -5,33 +5,22 @@ using UnityEngine;
 public class TileElement : MonoBehaviour
 {
     [SerializeField] private SpriteRenderer spriteRenderer;
-    private TileType type;
+    [SerializeField] private float moveSpeed;
 
-    public TileType Type
-    {
-        get 
-        { 
-            return type; 
-        }
+    public TileType Type { get; set; }
+    [HideInInspector]
+    public Vector2Int indices;
 
-        set
-        {
-            type = value;
-        }
-
-    }
-
-    public void Init(TileElementData data)
+    public void Init(TileElementData data, int x, int y)
     {
         spriteRenderer.sprite = data.sprite;
-        type = data.type;
-        
+        Type = data.type;
+        indices = new Vector2Int(x, y);
     }
 
     public void Break()
     {
-        Debug.Log("i am break");
-        type = TileType.empty;
+        Type = TileType.empty;
 
         Color color = spriteRenderer.color;
         color.a = 0.3f;
@@ -39,4 +28,26 @@ public class TileElement : MonoBehaviour
         //Destroy(gameObject);
     }
 
+    public void Move(Vector3 position)
+    {
+        StartCoroutine(MoveFromTo(transform.position, position, moveSpeed));
+    }
+
+    IEnumerator MoveFromTo(Vector3 from, Vector3 to, float speed)
+    {
+        float step = (speed / (from - to).magnitude) * Time.fixedDeltaTime;
+        float t = 0;
+        while (t <= 1.0f)
+        {
+            t += step;
+            transform.position = Vector3.Lerp(from, to, t); 
+            yield return new WaitForFixedUpdate();         
+        }
+        transform.position = to;
+    }
+
+    private void OnMouseDown()
+    {
+        Debug.Log("(" + indices.x + "," + indices.y + ")");
+    }
 }

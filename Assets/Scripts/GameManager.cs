@@ -7,6 +7,7 @@ using Moves;
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private Level level;
+
     [SerializeField] private float hintTime = 5f;
 
     private const int maxSize = 20;
@@ -27,8 +28,9 @@ public class GameManager : MonoBehaviour
                 level.RemoveClusters(tiles, clusters);
                 FindClusters();
             }
+
             FindMoves();
-            if (moves.Count > 1)
+            if (moves.Count > 0)
             {
                 done = true;
                 level.MoveGridToCenter();
@@ -38,9 +40,12 @@ public class GameManager : MonoBehaviour
             {
                 level.DestroyAll();
             }
+
             moves.Clear();
             clusters.Clear();
         }
+
+        MakeMove(0,0,1,0);
     }
 
     private void FindClusters()
@@ -131,7 +136,7 @@ public class GameManager : MonoBehaviour
 
     private void Swap(int x1, int y1, int x2, int y2)
     {
-        var typeSwap = tiles[x1, y1].Type;
+        TileType typeSwap = tiles[x1, y1].Type;
         tiles[x1, y1].Type = tiles[x2, y2].Type;
         tiles[x2, y2].Type = typeSwap;
     }
@@ -152,7 +157,7 @@ public class GameManager : MonoBehaviour
                 {
                     Move move = new Move(i, j, i + 1, j);
                     moves.Add(move);
-                    Debug.Log("move: (" + i + "," + j + ") -> (" + (i + 1) + "," + j + ") Horizontal swap");
+                    //Debug.Log("move: (" + i + "," + j + ") -> (" + (i + 1) + "," + j + ") Horizontal swap");
                 }
             }
         }
@@ -171,7 +176,7 @@ public class GameManager : MonoBehaviour
                 {
                     Move move = new Move(i, j, i, j + 1);
                     moves.Add(move);
-                    Debug.Log("move: (" + i + "," + j + ") -> (" + i + "," + (j + 1) + ") Vertical swap");
+                    //Debug.Log("move: (" + i + "," + j + ") -> (" + i + "," + (j + 1) + ") Vertical swap");
                 }
             }
         }
@@ -179,7 +184,21 @@ public class GameManager : MonoBehaviour
         clusters.Clear();
     }
 
+    private void MakeMove(int x1, int y1, int x2, int y2)
+    {
+        tiles[x1, y1].Move(tiles[x2, y2].transform.position);
+        tiles[x2, y2].Move(tiles[x1, y1].transform.position);
 
+        
+        TileElement temp = tiles[x1, y1];
+        tiles[x1, y1] = tiles[x2, y2];
+        tiles[x2, y2]= temp;
+        
+
+        Debug.Log(tiles[0,0].Type);
+
+
+    }
 
 
 

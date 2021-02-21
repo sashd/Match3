@@ -24,7 +24,7 @@ public class Level: MonoBehaviour
                 element.transform.position = new Vector2(i * spacing, j * spacing);
                 int randomElement = Random.Range(0, tileElements.Length);
                 tiles[i, j] = element.GetComponent<TileElement>();
-                tiles[i, j].Init(tileElements[randomElement]);
+                tiles[i, j].Init(tileElements[randomElement], i, j);
             }
         }
     }
@@ -53,11 +53,11 @@ public class Level: MonoBehaviour
                 int randomElement = Random.Range(0, tileElements.Length);
                 if (cluster.horizontal)
                 {
-                    tiles[cluster.column + i, cluster.row].Init(tileElements[randomElement]);
+                    tiles[cluster.column + i, cluster.row].Init(tileElements[randomElement], cluster.column + i, cluster.row);
                 }
                 else
                 {
-                    tiles[cluster.column, cluster.row + i].Init(tileElements[randomElement]);
+                    tiles[cluster.column, cluster.row + i].Init(tileElements[randomElement], cluster.column, cluster.row + i);
                 }
             }
         }
