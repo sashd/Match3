@@ -400,6 +400,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0d07304dc9d0d34c8532ee4cf32aa2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameManager: {fileID: 1464547434}
 --- !u!4 &787135610
 Transform:
   m_ObjectHideFlags: 0
@@ -457,7 +458,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9eeeeac8a931c7458aaac0cae2b3749, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fieldSize: {x: 4, y: 4}
+  fieldSize: {x: 5, y: 6}
   tilePrefab: {fileID: 5976622877633377036, guid: 6643efdb4eccd2d4e9f368434317519c, type: 3}
   tileElements:
   - {fileID: 11400000, guid: cd4f506e53291fb4ab85241453d93985, type: 2}
@@ -465,7 +466,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 92768ba0a1ea19a45b180727c0b7b005, type: 2}
   - {fileID: 11400000, guid: 843bead033b858a4aa3885fcc6c5b651, type: 2}
   - {fileID: 11400000, guid: f3cab29c5aec42b43aaf52bfb1153ba6, type: 2}
-  spacing: 0.85
+  spacing: 0.8
 --- !u!1 &1464547433
 GameObject:
   m_ObjectHideFlags: 0
@@ -496,7 +497,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   level: {fileID: 1223730332}
-  swapBackDelay: 1
+  swapDelay: 0.5
   hintTime: 5
 --- !u!4 &1464547435
 Transform:

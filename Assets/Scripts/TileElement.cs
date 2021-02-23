@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class TileElement : MonoBehaviour
 {
@@ -10,6 +11,11 @@ public class TileElement : MonoBehaviour
     public TileType Type { get; set; }
     [HideInInspector]
     public Vector2Int indices;
+    public bool freestanding = false;
+
+    private bool highlighted = false;
+    public static event Action<int, int> OnElementClick;
+
 
     public void Init(TileElementData data, int x, int y)
     {
@@ -18,38 +24,56 @@ public class TileElement : MonoBehaviour
         indices = new Vector2Int(x, y);
     }
 
-    public void Break()
+    public void SetEmpty()
     {
         Type = TileType.empty;
+        spriteRenderer.color = Color.clear;
 
         // return to pool
-        Destroy(gameObject);
+        //Destroy(gameObject);
     }
 
     public void Move(Vector3 position, int x, int y)
     {
-        StartCoroutine(MoveFromTo(transform.position, position, moveSpeed));
+        StartCoroutine(MoveTo(position, moveSpeed));
 
         // Change indices info
         indices.x = x;
         indices.y = y;
     }
 
-    private IEnumerator MoveFromTo(Vector3 from, Vector3 to, float speed)
+    public IEnumerator MoveTo(Vector3 destination, float speed)
     {
-        float step = (speed / (from - to).magnitude) * Time.fixedDeltaTime;
-        float t = 0;
-        while (t <= 1.0f)
+        while (transform.localPosition != destination)
         {
-            t += step;
-            transform.position = Vector3.Lerp(from, to, t); 
-            yield return new WaitForFixedUpdate();         
+            transform.localPosition = Vector3.MoveTowards(transform.localPosition, destination, speed * Time.deltaTime);
+            yield return null;
         }
-        transform.position = to;
+        transform.localPosition = destination;
     }
+
+    public void Highlight()
+    {
+        if (!highlighted)
+        {
+            spriteRenderer.color = Color.blue;
+        }
+        else
+        {
+            spriteRenderer.color = Color.white;
+        }
+        highlighted = !highlighted;
+    }
+
 
     private void OnMouseDown()
     {
-        Debug.Log("(" + indices.x + "," + indices.y + ")");
+        Debug.Log(indices.x + "," + indices.y + " type: " + Type);
+
+        if (Type == TileType.empty)
+            return;
+
+        OnElementClick?.Invoke(indices.x, indices.y);
+        //Highlight();
     }
 }

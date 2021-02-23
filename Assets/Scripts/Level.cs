@@ -18,15 +18,20 @@ public class Level: MonoBehaviour
         {
             for (int j = 0; j < fieldSize.y; j++)
             {
-                Vector2 tilePosition = new Vector2(i, j);
-                // get from pool 
-                GameObject element = Instantiate(tilePrefab, tilePosition, Quaternion.identity, transform);
-                element.transform.position = new Vector2(i * spacing, j * spacing);
-                int randomElement = Random.Range(0, tileElements.Length);
-                tiles[i, j] = element.GetComponent<TileElement>();
-                tiles[i, j].Init(tileElements[randomElement], i, j);
+                tiles[i, j] = PlaceRandomTile(i, j);
             }
         }
+    }
+
+    public TileElement PlaceRandomTile(int x, int y)
+    {
+        Vector2 tilePosition = new Vector2(x, y);
+        GameObject element = Instantiate(tilePrefab, tilePosition, Quaternion.identity, transform);
+        element.transform.localPosition = new Vector2(x * spacing, y * spacing);
+        int randomElement = Random.Range(0, tileElements.Length);
+        TileElement tile = element.GetComponent<TileElement>();
+        tile.Init(tileElements[randomElement], x, y);
+        return tile;
     }
 
     public void DestroyAll()

@@ -8,8 +8,7 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField] private Level level;
 
-    [Min(1)]
-    [SerializeField] private float swapBackDelay = 0.5f;
+    [SerializeField] private float swapDelay = 0.5f;
     [SerializeField] private float hintTime = 5f;
 
     private const int maxSize = 20;
@@ -20,8 +19,8 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        bool done = false;
-        while (!done)
+        bool levelGenerated = false;
+        while (!levelGenerated)
         {
             level.Generate(tiles);
             FindClusters();
@@ -34,7 +33,7 @@ public class GameManager : MonoBehaviour
             FindMoves();
             if (moves.Count > 0)
             {
-                done = true;
+                levelGenerated = true;
                 level.MoveGridToCenter();
                 Debug.Log("Level has no clusters and " + moves.Count + " moves");
             }
@@ -48,7 +47,7 @@ public class GameManager : MonoBehaviour
         }
 
         // ------------ TEST ----------------
-        StartCoroutine(MakeMove(0,0,0,1));
+
     }
 
     private void FindClusters()
@@ -69,7 +68,7 @@ public class GameManager : MonoBehaviour
                 }
                 else
                 {
-                    if (tiles[i, j].Type == tiles[i + 1, j].Type)
+                    if (tiles[i, j].Type == tiles[i + 1, j].Type && tiles[i, j].Type != TileType.empty)
                     {
                         matchLength += 1;
                     }
@@ -110,7 +109,7 @@ public class GameManager : MonoBehaviour
                 }
                 else
                 {
-                    if (tiles[i, j].Type == tiles[i, j + 1].Type)
+                    if (tiles[i, j].Type == tiles[i, j + 1].Type && tiles[i, j].Type != TileType.empty)
                     {
                         matchLength += 1;
                     }
@@ -146,6 +145,9 @@ public class GameManager : MonoBehaviour
 
     private void FindMoves()
     {
+        Debug.Log("FindMoves");
+
+
         // Horizontal swaps
         for (int j = 0; j < level.fieldSize.y; j++)
         {
@@ -183,52 +185,99 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
-
-        clusters.Clear();
     }
 
-    private IEnumerator MakeMove(int x1, int y1, int x2, int y2)
+    public IEnumerator MakeMove(int x1, int y1, int x2, int y2)
     {
-        tiles[x1, y1].Move(tiles[x2, y2].transform.position, x2, y2);
-        tiles[x2, y2].Move(tiles[x1, y1].transform.position, x1, y1);
+        Debug.Log("MakeMove");
+
+        tiles[x1, y1].Move(tiles[x2, y2].transform.localPosition, x2, y2);
+        tiles[x2, y2].Move(tiles[x1, y1].transform.localPosition, x1, y1);
         Swap(x1, y1, x2, y2);
 
         FindClusters();
+        yield return new WaitForSeconds(swapDelay);
 
         if (clusters.Count > 0)
         {
+
             // If after the move cluster was formed
-            ResolveClusters();
+            BreakClusters();
         }
         else
         {
-            yield return new WaitForSeconds(swapBackDelay);
 
             // Return tiles to their previous position
-            tiles[x1, y1].Move(tiles[x2, y2].transform.position, x2, y2);
-            tiles[x2, y2].Move(tiles[x1, y1].transform.position, x1, y1);
+            tiles[x1, y1].Move(tiles[x2, y2].transform.localPosition, x2, y2);
+            tiles[x2, y2].Move(tiles[x1, y1].transform.localPosition, x1, y1);
             Swap(x1, y1, x2, y2);
         }
     }
 
-    private void ResolveClusters()
+    private void BreakClusters()
     {
-        Debug.Log("resolve clusters");
+        Debug.Log("BreakClusters");
 
         foreach (Cluster cluster in clusters)
         {
-            // destroy all tiles in the cluster
+            // set all tiles in the cluster as empty
             for (int i = 0; i < cluster.length; i++)
             {
                 if (cluster.horizontal)
                 {
-                    tiles[cluster.column + i, cluster.row].Break();
+                    tiles[cluster.column + i, cluster.row].SetEmpty();
+
                 }
                 else
                 {
-                    tiles[cluster.column, cluster.row + i].Break();
+                    tiles[cluster.column, cluster.row + i].SetEmpty();
                 }
             }
         }
+        clusters.Clear();
+
+        ShiftTiles();
+    }
+
+    private void FindFreestandings()
+    {
+        Debug.Log("Find freestandings");
+
+
+        for (int i = 0; i < level.fieldSize.x; i++)
+        {
+            for (int j = level.fieldSize.y - 1; j > 0; j--)
+            {
+
+            }
+        }
+    }
+
+    private void ShiftTiles()
+    {
+        Debug.Log("Shift tiles");
+
+        
+        for (int i = 0; i < level.fieldSize.x; i++)
+        {
+            bool done = false;
+            for (int j = level.fieldSize.y - 1; j > 0; j--)
+            {
+
+                    if (tiles[i, j - 1].Type == TileType.empty)
+                    {
+                        Debug.Log("move to" + i + "," + (j - 1));
+                        tiles[i, j].Move(tiles[i, j - 1].transform.localPosition, i, j - 1);
+                        tiles[i, j - 1].Move(tiles[i, j].transform.localPosition, i, j);
+                        Swap(i, j, i, j - 1);
+
+                        // зациклить чтобы каждый столбец падал до конца
+                        //if ()
+                    }
+
+            }
+
+        }
+
     }
 }
