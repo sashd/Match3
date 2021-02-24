@@ -4,12 +4,19 @@ using UnityEngine;
 using Clusters;
 using Moves;
 
+public enum GameState
+{
+    moving,
+    idle
+}
+
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private Level level;
 
-    [SerializeField] private float swapDelay = 0.5f;
     [SerializeField] private float hintTime = 5f;
+
+    public static GameState gameState;
 
     private const int maxSize = 20;
     private TileElement[,] tiles = new TileElement[maxSize, maxSize];
@@ -196,7 +203,7 @@ public class GameManager : MonoBehaviour
         Swap(x1, y1, x2, y2);
 
         FindClusters();
-        yield return new WaitForSeconds(swapDelay);
+        yield return new WaitUntil(() => tiles[x1, y1].move == false);
 
         if (clusters.Count > 0)
         {
@@ -235,49 +242,36 @@ public class GameManager : MonoBehaviour
             }
         }
         clusters.Clear();
-
-        ShiftTiles();
+        StartCoroutine(ShiftTiles());
     }
 
-    private void FindFreestandings()
-    {
-        Debug.Log("Find freestandings");
-
-
-        for (int i = 0; i < level.fieldSize.x; i++)
-        {
-            for (int j = level.fieldSize.y - 1; j > 0; j--)
-            {
-
-            }
-        }
-    }
-
-    private void ShiftTiles()
+    private IEnumerator ShiftTiles()
     {
         Debug.Log("Shift tiles");
+        int emptyCount = 0;
 
-        
         for (int i = 0; i < level.fieldSize.x; i++)
         {
-            bool done = false;
-            for (int j = level.fieldSize.y - 1; j > 0; j--)
+            for (int j = 0; j < level.fieldSize.y; j++)
             {
-
-                    if (tiles[i, j - 1].Type == TileType.empty)
-                    {
-                        Debug.Log("move to" + i + "," + (j - 1));
-                        tiles[i, j].Move(tiles[i, j - 1].transform.localPosition, i, j - 1);
-                        tiles[i, j - 1].Move(tiles[i, j].transform.localPosition, i, j);
-                        Swap(i, j, i, j - 1);
-
-                        // зациклить чтобы каждый столбец падал до конца
-                        //if ()
-                    }
+                if (tiles[i,j].Type == TileType.empty)
+                {
+                    emptyCount++;
+                }
+                else if (emptyCount > 0)
+                {
+                    tiles[i, j].Move(tiles[i, j - emptyCount].transform.localPosition, i, j - emptyCount);
+                    tiles[i, j - emptyCount].Move(tiles[i, j].transform.localPosition, i, j);
+                    Swap(i, j, i, j - emptyCount);
+                }
+                yield return new WaitUntil(() => tiles[i, j].move == false);
 
             }
 
+            emptyCount = 0;
         }
-
+        FindClusters();
+        if (clusters.Count > 0)
+            BreakClusters();
     }
 }

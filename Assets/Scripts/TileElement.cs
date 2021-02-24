@@ -9,13 +9,15 @@ public class TileElement : MonoBehaviour
     [SerializeField] private float moveSpeed;
 
     public TileType Type { get; set; }
+
     [HideInInspector]
     public Vector2Int indices;
-    public bool freestanding = false;
+    [HideInInspector]
+    public bool move;
 
-    private bool highlighted = false;
+    private Vector3 target;
+
     public static event Action<int, int> OnElementClick;
-
 
     public void Init(TileElementData data, int x, int y)
     {
@@ -24,37 +26,40 @@ public class TileElement : MonoBehaviour
         indices = new Vector2Int(x, y);
     }
 
+    private void Update()
+    {
+        if (!move)
+            return;
+
+        transform.localPosition = Vector3.MoveTowards(transform.localPosition, target, moveSpeed * Time.deltaTime);
+        if (transform.localPosition == target)
+        {
+            move = false;
+        }
+    }
+
     public void SetEmpty()
     {
         Type = TileType.empty;
         spriteRenderer.color = Color.clear;
-
-        // return to pool
-        //Destroy(gameObject);
     }
+
+
 
     public void Move(Vector3 position, int x, int y)
     {
-        StartCoroutine(MoveTo(position, moveSpeed));
+        move = true;
+        target = position;
+
 
         // Change indices info
         indices.x = x;
         indices.y = y;
     }
 
-    public IEnumerator MoveTo(Vector3 destination, float speed)
+    public void Highlight(bool on)
     {
-        while (transform.localPosition != destination)
-        {
-            transform.localPosition = Vector3.MoveTowards(transform.localPosition, destination, speed * Time.deltaTime);
-            yield return null;
-        }
-        transform.localPosition = destination;
-    }
-
-    public void Highlight()
-    {
-        if (!highlighted)
+        if (on)
         {
             spriteRenderer.color = Color.blue;
         }
@@ -62,7 +67,6 @@ public class TileElement : MonoBehaviour
         {
             spriteRenderer.color = Color.white;
         }
-        highlighted = !highlighted;
     }
 
 
@@ -74,6 +78,6 @@ public class TileElement : MonoBehaviour
             return;
 
         OnElementClick?.Invoke(indices.x, indices.y);
-        //Highlight();
+        //Highlight(true);
     }
 }

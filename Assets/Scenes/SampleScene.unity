@@ -458,7 +458,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9eeeeac8a931c7458aaac0cae2b3749, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fieldSize: {x: 5, y: 6}
+  fieldSize: {x: 5, y: 5}
   tilePrefab: {fileID: 5976622877633377036, guid: 6643efdb4eccd2d4e9f368434317519c, type: 3}
   tileElements:
   - {fileID: 11400000, guid: cd4f506e53291fb4ab85241453d93985, type: 2}
@@ -497,7 +497,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   level: {fileID: 1223730332}
-  swapDelay: 0.5
   hintTime: 5
 --- !u!4 &1464547435
 Transform:
