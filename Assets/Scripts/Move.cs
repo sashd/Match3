@@ -15,5 +15,16 @@ namespace Moves
         int row_1;
         int column_2;
         int row_2;
+
+        // TEST
+        public string Info
+        {
+            get
+            {
+                string str = "from: " + column_1.ToString() + "," + row_1.ToString() + " to: " + column_2.ToString() + "," + row_2.ToString();
+                return str;
+            }
+        }
+
     }
 }

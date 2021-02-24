@@ -12,8 +12,7 @@ public class TileElement : MonoBehaviour
 
     [HideInInspector]
     public Vector2Int indices;
-    [HideInInspector]
-    public bool move;
+    public bool Moving { get; private set; }
 
     private Vector3 target;
 
@@ -21,20 +20,23 @@ public class TileElement : MonoBehaviour
 
     public void Init(TileElementData data, int x, int y)
     {
+        Debug.Log("init");
         spriteRenderer.sprite = data.sprite;
+        spriteRenderer.color = new Color(1,1,1,1);
+
         Type = data.type;
         indices = new Vector2Int(x, y);
     }
 
     private void Update()
     {
-        if (!move)
+        if (!Moving)
             return;
 
         transform.localPosition = Vector3.MoveTowards(transform.localPosition, target, moveSpeed * Time.deltaTime);
         if (transform.localPosition == target)
         {
-            move = false;
+            Moving = false;
         }
     }
 
@@ -48,9 +50,8 @@ public class TileElement : MonoBehaviour
 
     public void Move(Vector3 position, int x, int y)
     {
-        move = true;
+        Moving = true;
         target = position;
-
 
         // Change indices info
         indices.x = x;

@@ -48,7 +48,7 @@ public class Level: MonoBehaviour
         transform.position = new Vector2(-gridSize.x / 2 + spacing / 2, -(gridSize.y / 2 - spacing / 2));
     }
 
-    public void RemoveClusters(TileElement[,] tiles, List<Cluster> clusters)
+    public void ReInitElements(TileElement[,] tiles, List<Cluster> clusters)
     {
         foreach(Cluster cluster in clusters)
         {

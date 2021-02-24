@@ -46,9 +46,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spriteRenderer: {fileID: 8111084839580125706}
-  moveSpeed: 5
+  moveSpeed: 12
   indices: {x: 0, y: 0}
-  move: 0
 --- !u!212 &8111084839580125706
 SpriteRenderer:
   m_ObjectHideFlags: 0
