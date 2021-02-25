@@ -1,30 +1,16 @@
+using UnityEngine;
 
 namespace Moves
 {
     public struct Move
     {
-        public Move(int column_1, int row_1, int column_2, int row_2)
+        public Move(int x1, int y1, int x2, int y2)
         {
-            this.column_1 = column_1;
-            this.row_1 = row_1;
-            this.column_2 = column_2;
-            this.row_2 = row_2;
+            from = new Vector2Int(x1, y1);
+            to = new Vector2Int(x2, y2);
         }
 
-        int column_1;
-        int row_1;
-        int column_2;
-        int row_2;
-
-        // TEST
-        public string Info
-        {
-            get
-            {
-                string str = "from: " + column_1.ToString() + "," + row_1.ToString() + " to: " + column_2.ToString() + "," + row_2.ToString();
-                return str;
-            }
-        }
-
+        public Vector2Int from;
+        public Vector2Int to;
     }
 }

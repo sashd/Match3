@@ -15,14 +15,19 @@ public class TileElement : MonoBehaviour
     public bool Moving { get; private set; }
 
     private Vector3 target;
+    private Animator animator;
 
     public static event Action<int, int> OnElementClick;
 
+
+
     public void Init(TileElementData data, int x, int y)
     {
-        Debug.Log("init");
+        animator = GetComponent<Animator>();
+
         spriteRenderer.sprite = data.sprite;
         spriteRenderer.color = new Color(1,1,1,1);
+        animator.SetTrigger("Appear");
 
         Type = data.type;
         indices = new Vector2Int(x, y);
@@ -46,12 +51,10 @@ public class TileElement : MonoBehaviour
         spriteRenderer.color = Color.clear;
     }
 
-
-
-    public void Move(Vector3 position, int x, int y)
+    public void Move(Vector3 target, int x, int y)
     {
         Moving = true;
-        target = position;
+        this.target = target;
 
         // Change indices info
         indices.x = x;
