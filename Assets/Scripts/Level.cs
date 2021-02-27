@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Clusters;
+using Matches;
 using Moves;
 using System;
 
@@ -30,10 +30,10 @@ public class Level: MonoBehaviour
     [SerializeField] private float timeBeforeGenerate = 0.2f;
 
     public event Action OnReadyToMakeMove;
-    public event Action<int> OnClusterBreak;
+    public event Action<int> OnMatchBreak;
 
     private TileElement[,] tiles = new TileElement[maxSize, maxSize];
-    private List<Cluster> clusters = new List<Cluster>();
+    private List<Match> matches = new List<Match>();
     private List<Move> moves = new List<Move>();
 
     public void Generate()
@@ -59,15 +59,15 @@ public class Level: MonoBehaviour
 
         yield return new WaitUntil(() => tiles[move.from.x, move.from.y].Moving == false);
 
-        FindClusters();
-        if (clusters.Count > 0)
+        FindMatches();
+        if (matches.Count > 0)
         {
             yield return new WaitForSeconds(timeBeforeBreak);
-            BreakClusters();
+            BreakMatchTiles();
         }
         else
         {
-            // Return back if there is no cluster
+            // Return back if there is no matches
             MoveTiles(move);
             OnReadyToMakeMove?.Invoke();
         }
@@ -96,11 +96,11 @@ public class Level: MonoBehaviour
                     RandomInit(tiles[i, j], i, j);
                 }
             }
-            FindClusters();
-            while (clusters.Count > 0)
+            FindMatches();
+            while (matches.Count > 0)
             {
-                ReInitClusterTiles();
-                FindClusters();
+                ReInitMatchTiles();
+                FindMatches();
             }
 
             FindMoves();
@@ -130,20 +130,19 @@ public class Level: MonoBehaviour
         tiles[x2, y2] = temp;
     }
 
-    private void FindClusters()
+    private void FindMatches()
     {
-        clusters.Clear();
+        matches.Clear();
 
-        // Find Horizontal clusters
         for (int j = 0; j < height; j++)
         {
             int matchLength = 1;
             for (int i = 0; i < width; i++)
             {
-                bool clusterChecked = false;
+                bool matchChecked = false;
                 if (i == width - 1)
                 {
-                    clusterChecked = true;
+                    matchChecked = true;
                 }
                 else
                 {
@@ -153,33 +152,31 @@ public class Level: MonoBehaviour
                     }
                     else
                     {
-                        clusterChecked = true;
+                        matchChecked = true;
                     }
                 }
 
-                if (clusterChecked)
+                if (matchChecked)
                 {
                     if (matchLength >= 3)
                     {
-                        // Cluster found
-                        Cluster cluster = new Cluster(i + 1 - matchLength, j, matchLength, true);
-                        clusters.Add(cluster);
+                        Match match = new Match(i + 1 - matchLength, j, matchLength, true);
+                        matches.Add(match);
                     }
                     matchLength = 1;
                 }
             }
         }
 
-        // Find Vertical clusters
         for (int i = 0; i < width; i++)
         {
             int matchLength = 1;
             for (int j = 0; j < height; j++)
             {
-                bool clusterChecked = false;
+                bool matchChecked = false;
                 if (j == height - 1)
                 {
-                    clusterChecked = true;
+                    matchChecked = true;
                 }
                 else
                 {
@@ -189,17 +186,16 @@ public class Level: MonoBehaviour
                     }
                     else
                     {
-                        clusterChecked = true;
+                        matchChecked = true;
                     }
                 }
 
-                if (clusterChecked)
+                if (matchChecked)
                 {
                     if (matchLength >= 3)
                     {
-                        // Cluster found
-                        Cluster cluster = new Cluster(i, j + 1 - matchLength, matchLength, false);
-                        clusters.Add(cluster);
+                        Match match = new Match(i, j + 1 - matchLength, matchLength, false);
+                        matches.Add(match);
                     }
                     matchLength = 1;
                 }
@@ -213,27 +209,26 @@ public class Level: MonoBehaviour
         transform.position = new Vector2(-gridSize.x / 2 + spacing / 2, -(gridSize.y / 2 - spacing / 2));
     }
 
-    private void ReInitClusterTiles()
+    private void ReInitMatchTiles()
     {
-        foreach (Cluster cluster in clusters)
+        foreach (Match match in matches)
         {
-            for (int i = 0; i < cluster.length; i++)
+            for (int i = 0; i < match.length; i++)
             {
-                if (cluster.horizontal)
+                if (match.horizontal)
                 {
-                    RandomInit(tiles[cluster.column + i, cluster.row], cluster.column + i, cluster.row);
+                    RandomInit(tiles[match.column + i, match.row], match.column + i, match.row);
                 }
                 else
                 {
-                    RandomInit(tiles[cluster.column, cluster.row + i], cluster.column, cluster.row + i);
+                    RandomInit(tiles[match.column, match.row + i], match.column, match.row + i);
                 }
             }
         }
     }
 
     private void RandomInit(TileElement tile, int x, int y)
-    {
-        
+    {        
         int randomElement = UnityEngine.Random.Range(0, tileElements.Length);
         tile.Init(tileElements[randomElement], x, y);
     }
@@ -248,11 +243,11 @@ public class Level: MonoBehaviour
             for (int i = 0; i < width - 1; i++)
             {
                 SwapTiles(i, j, i + 1, j);
-                FindClusters();
+                FindMatches();
                 SwapTiles(i, j, i + 1, j); // Swap back
 
-                // If there was a cluster so move is available 
-                if (clusters.Count > 0)
+                // If there was a match so move is available 
+                if (matches.Count > 0)
                 {
                     Move move = new Move(i, j, i + 1, j);
                     moves.Add(move);
@@ -266,11 +261,10 @@ public class Level: MonoBehaviour
             for (int j = 0; j < height - 1; j++)
             {
                 SwapTiles(i, j, i, j + 1);
-                FindClusters();
-                SwapTiles(i, j, i, j + 1); // Swap back
+                FindMatches();
+                SwapTiles(i, j, i, j + 1);
 
-                // If there was a cluster so move is available 
-                if (clusters.Count > 0)
+                if (matches.Count > 0)
                 {
                     Move move = new Move(i, j, i, j + 1);
                     moves.Add(move);
@@ -279,24 +273,23 @@ public class Level: MonoBehaviour
         }
     }
 
-    private void BreakClusters()
+    private void BreakMatchTiles()
     {
-        foreach (Cluster cluster in clusters)
+        foreach (Match match in matches)
         {
-            // set all tiles in the cluster as empty
-            for (int i = 0; i < cluster.length; i++)
+            // Set all tiles in the match as empty
+            for (int i = 0; i < match.length; i++)
             {
-                if (cluster.horizontal)
+                if (match.horizontal)
                 {
-                    tiles[cluster.column + i, cluster.row].SetEmpty();
-
+                    tiles[match.column + i, match.row].SetEmpty();
                 }
                 else
                 {
-                    tiles[cluster.column, cluster.row + i].SetEmpty();
+                    tiles[match.column, match.row + i].SetEmpty();
                 }
             }
-            OnClusterBreak?.Invoke(cluster.length);
+            OnMatchBreak?.Invoke(match.length);
         }
         StartCoroutine(ShiftTiles());
     }
@@ -323,11 +316,11 @@ public class Level: MonoBehaviour
             emptyCount = 0;
         }
 
-        FindClusters();
-        if (clusters.Count > 0)
+        FindMatches();
+        if (matches.Count > 0)
         {
             yield return new WaitForSeconds(timeBeforeBreak);
-            BreakClusters();
+            BreakMatchTiles();
         }
         else
         {
@@ -349,11 +342,11 @@ public class Level: MonoBehaviour
             }
         }
 
-        FindClusters();
-        if (clusters.Count > 0)
+        FindMatches();
+        if (matches.Count > 0)
         {
             yield return new WaitForSeconds(timeBeforeBreak);
-            BreakClusters();
+            BreakMatchTiles();
             yield break;
         }
 

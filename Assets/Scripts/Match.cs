@@ -1,8 +1,8 @@
-namespace Clusters
+namespace Matches
 {
-    public struct Cluster
+    public struct Match
     {
-        public Cluster(int column, int row, int length, bool horizontal)
+        public Match(int column, int row, int length, bool horizontal)
         {
             this.column = column;
             this.row = row;

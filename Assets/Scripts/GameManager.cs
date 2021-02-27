@@ -41,7 +41,7 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         level.OnReadyToMakeMove += OnReadyToMakeMove;
-        level.OnClusterBreak += OnClusterBreak;
+        level.OnMatchBreak += OnMatchBreak;
         input.OnMoveMade += MakeMove;
     }
 
@@ -86,7 +86,7 @@ public class GameManager : MonoBehaviour
         givingHint = false;
     }
 
-    private void OnClusterBreak(int tilesCount)
+    private void OnMatchBreak(int tilesCount)
     {
         if (gameState == GameState.GameOver)
             return;
@@ -138,7 +138,7 @@ public class GameManager : MonoBehaviour
     private void OnDestroy()
     {
         level.OnReadyToMakeMove -= OnReadyToMakeMove;
-        level.OnClusterBreak -= OnClusterBreak;
+        level.OnMatchBreak -= OnMatchBreak;
         input.OnMoveMade -= MakeMove;
     }
 
