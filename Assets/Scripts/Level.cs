@@ -9,19 +9,26 @@ public class Level: MonoBehaviour
 {
     private const int maxSize = 10;
 
+    [Header("Level Size")]
     [Range(3, maxSize)]
-    [SerializeField] private float width = 5;
-    [Range(3, maxSize)]
-    [SerializeField] private float height = 5;
+    [SerializeField] private int width = 5;
 
-    [SerializeField] private GameObject tilePrefab;
-    [SerializeField] private TileElementData[] tileElements;
-    [SerializeField] private float tileGenerationDelay = 0.3f; 
+    [Range(3, maxSize)]
+    [SerializeField] private int height = 5;
 
     [Range(0.7f, 1.2f)]
-    [SerializeField] public float spacing = 1;
+    [SerializeField] public float spacing = 0.9f;
 
-    public event Action OnNoMovesLeft;
+    [Header("Tiles on level")]
+    [SerializeField] private GameObject tilePrefab;
+    [SerializeField] private TileElementData[] tileElements;
+
+    [Header("Timings")]
+    [Min(0.1f)]
+    [SerializeField] private float timeBeforeBreak = 0.2f;
+    [Min(0.1f)]
+    [SerializeField] private float timeBeforeGenerate = 0.2f;
+
     public event Action OnReadyToMakeMove;
     public event Action<int> OnClusterBreak;
 
@@ -31,6 +38,42 @@ public class Level: MonoBehaviour
 
     public void Generate()
     {
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+                Vector2 tilePosition = new Vector2(i, j);
+                GameObject element = Instantiate(tilePrefab, tilePosition, Quaternion.identity, transform);
+                element.transform.localPosition = new Vector2(i * spacing, j * spacing);
+                TileElement tile = element.GetComponent<TileElement>();
+                tiles[i, j] = tile;
+            }
+        }
+        MoveGridToCenter();
+        InitAll();
+    }
+
+    public IEnumerator MakeMove(Move move)
+    {
+        MoveTiles(move);
+
+        yield return new WaitUntil(() => tiles[move.from.x, move.from.y].Moving == false);
+
+        FindClusters();
+        if (clusters.Count > 0)
+        {
+            yield return new WaitForSeconds(timeBeforeBreak);
+            BreakClusters();
+        }
+        else
+        {
+            // Return back if there is no cluster
+            MoveTiles(move);
+        }
+    }
+
+    private void InitAll()
+    {
         bool levelGenerated = false;
         while (!levelGenerated)
         {
@@ -38,7 +81,7 @@ public class Level: MonoBehaviour
             {
                 for (int j = 0; j < height; j++)
                 {
-                    tiles[i, j] = PlaceRandomTile(i, j);
+                    RandomInit(tiles[i, j], i, j);
                 }
             }
             FindClusters();
@@ -52,18 +95,15 @@ public class Level: MonoBehaviour
             if (moves.Count > 0)
             {
                 levelGenerated = true;
-                MoveGridToCenter();
-                Debug.Log("Level generated with " + clusters.Count + " clusters and " + moves.Count + " available moves");
-                OnReadyToMakeMove?.Invoke();
             }
             else
             {
-                // Re-init all tiles
-                for (int i = 0; i < width; i++)
-                    for (int j = 0; j < height; j++)
-                        RandomInit(tiles[i,j],i,j);
+                continue;
             }
         }
+
+        OnReadyToMakeMove?.Invoke();
+        
     }
 
     private void MoveTiles(Move move)
@@ -73,39 +113,11 @@ public class Level: MonoBehaviour
         SwapTiles(move.from.x, move.from.y, move.to.x, move.to.y);
     }
 
-    public IEnumerator MakeMove(Move move)
-    {
-        MoveTiles(move);
-
-        yield return new WaitUntil(() => tiles[move.from.x, move.from.y].Moving == false);
-
-        FindClusters();
-        if (clusters.Count > 0)
-        {
-            BreakClusters();
-        }
-        else
-        {
-            // Return back if there is no cluster
-            MoveTiles(move);
-        }
-    }
-
     private void SwapTiles(int x1, int y1, int x2, int y2)
     {
         TileElement temp = tiles[x1, y1];
         tiles[x1, y1] = tiles[x2, y2];
         tiles[x2, y2] = temp;
-    }
-
-    private TileElement PlaceRandomTile(int x, int y)
-    {
-        Vector2 tilePosition = new Vector2(x, y);
-        GameObject element = Instantiate(tilePrefab, tilePosition, Quaternion.identity, transform);
-        element.transform.localPosition = new Vector2(x * spacing, y * spacing);
-        TileElement tile = element.GetComponent<TileElement>();
-        RandomInit(tile, x, y);
-        return tile;
     }
 
     private void FindClusters()
@@ -260,8 +272,6 @@ public class Level: MonoBehaviour
 
     private void BreakClusters()
     {
-        Debug.Log("BreakClusters");
-
         foreach (Cluster cluster in clusters)
         {
             // set all tiles in the cluster as empty
@@ -276,10 +286,9 @@ public class Level: MonoBehaviour
                 {
                     tiles[cluster.column, cluster.row + i].SetEmpty();
                 }
-                OnClusterBreak?.Invoke(cluster.length);
             }
+            OnClusterBreak?.Invoke(cluster.length);
         }
-        clusters.Clear();
         StartCoroutine(ShiftTiles());
     }
 
@@ -308,22 +317,23 @@ public class Level: MonoBehaviour
         FindClusters();
         if (clusters.Count > 0)
         {
+            yield return new WaitForSeconds(timeBeforeBreak);
             BreakClusters();
         }
         else
         {
-            yield return new WaitForSeconds(tileGenerationDelay);
-            GenerateNewTiles();
+            yield return new WaitForSeconds(timeBeforeGenerate);
+            StartCoroutine(FillEmptyTiles());
         }
     }
 
-    private void GenerateNewTiles()
+    private IEnumerator FillEmptyTiles()
     {
         for (int i = 0; i < width; i++)
         {
             for (int j = 0; j < height; j++)
             {
-                if (tiles[i,j].Type == TileType.empty)
+                if (tiles[i, j].Type == TileType.empty)
                 {
                     RandomInit(tiles[i, j], i, j);
                 }
@@ -331,22 +341,23 @@ public class Level: MonoBehaviour
         }
 
         FindClusters();
-        while (clusters.Count > 0)
+        if (clusters.Count > 0)
         {
+            yield return new WaitForSeconds(timeBeforeBreak);
             BreakClusters();
-            FindClusters();
+            yield break;
         }
 
         FindMoves();
-        if (moves.Count == 0)
-        {
-            OnNoMovesLeft?.Invoke();
-        }
-        else
+        if (moves.Count > 0)
         {
             OnReadyToMakeMove?.Invoke();
         }
-        
-
+        else
+        {
+            Debug.Log("No moves! Generate again");
+            yield return new WaitForSeconds(timeBeforeGenerate);
+            InitAll();
+        }
     }
 }

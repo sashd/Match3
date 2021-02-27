@@ -26,7 +26,7 @@ public class TileElement : MonoBehaviour
         animator = GetComponent<Animator>();
 
         spriteRenderer.sprite = data.sprite;
-        spriteRenderer.color = new Color(1,1,1,1);
+        spriteRenderer.color = Color.white;
         animator.SetTrigger("Appear");
 
         Type = data.type;
@@ -48,6 +48,7 @@ public class TileElement : MonoBehaviour
     public void SetEmpty()
     {
         Type = TileType.empty;
+        // Set Sprite alpha to 0
         spriteRenderer.color = Color.clear;
     }
 
@@ -76,8 +77,6 @@ public class TileElement : MonoBehaviour
 
     private void OnMouseDown()
     {
-        Debug.Log(indices.x + "," + indices.y + " type: " + Type);
-
         if (Type == TileType.empty)
             return;
 
