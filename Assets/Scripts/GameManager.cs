@@ -18,12 +18,16 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameInput input;
 
     [Header("Game settings")]
-    [SerializeField] private float hintTime = 5f;
+    [Min(1f)]
+    [SerializeField] private float hintTime = 3f;
 
     [Space]
-    [SerializeField] private int targetScore;
-    [SerializeField] private float timeLimit;
-    [SerializeField] private int movesLimit;
+    [Min(3)]
+    [SerializeField] private int targetScore = 40;
+    [Min(0f)]
+    [SerializeField] private float timeLimit = 60f;
+    [Min(1)]
+    [SerializeField] private int movesLimit = 10;
 
     private GameState gameState;
     private int   currentScore = 0;
@@ -58,20 +62,17 @@ public class GameManager : MonoBehaviour
             currentHintTime -= Time.deltaTime;
         }
 
-        if (currentGameTime > timeLimit)
-        {
-            Debug.Log("Game over");
-            gameState = GameState.GameOver;
-            return;
-        }
-        
         if (currentHintTime < 0)
         {
             GiveHint();
             currentHintTime = hintTime;
         }
 
-
+        if (currentGameTime > timeLimit)
+        {
+            GameLost();
+            return;
+        }
     }
 
     public void MakeMove(Move move)
@@ -92,14 +93,22 @@ public class GameManager : MonoBehaviour
 
         currentScore += tilesCount;
         OnScoreChange(currentScore);
+
+        if (currentScore >= targetScore)
+        {
+            GameWon();
+        }
     }
 
     private void OnReadyToMakeMove()
     {
-        Debug.Log("OnReadyToMakeMove");
+        if (currentMoves > movesLimit)
+        {
+            GameLost();
+            return;
+        }
 
         gameState = GameState.WaitingForMove;
-
         currentHintTime = hintTime;
     }
 
@@ -108,8 +117,22 @@ public class GameManager : MonoBehaviour
         if (givingHint)
             return;
 
+        level.GetHint();
+
         givingHint = true;
         Debug.Log("Give a hint");
+    }
+
+    private void GameWon()
+    {
+        Debug.Log("You are win");
+        gameState = GameState.GameOver;
+    }
+
+    private void GameLost()
+    {
+        Debug.Log("Game over");
+        gameState = GameState.GameOver;
     }
 
     private void OnDestroy()

@@ -69,6 +69,18 @@ public class Level: MonoBehaviour
         {
             // Return back if there is no cluster
             MoveTiles(move);
+            OnReadyToMakeMove?.Invoke();
+        }
+    }
+
+    public void GetHint()
+    {
+        FindMoves();
+        if (moves.Count > 0)
+        {
+            Move availableMove = moves[0];
+            tiles[availableMove.from.x, availableMove.from.y].Hint();
+            tiles[availableMove.to.x, availableMove.to.y].Hint();
         }
     }
 
@@ -87,7 +99,7 @@ public class Level: MonoBehaviour
             FindClusters();
             while (clusters.Count > 0)
             {
-                RemoveClusters();
+                ReInitClusterTiles();
                 FindClusters();
             }
 
@@ -101,9 +113,7 @@ public class Level: MonoBehaviour
                 continue;
             }
         }
-
         OnReadyToMakeMove?.Invoke();
-        
     }
 
     private void MoveTiles(Move move)
@@ -203,9 +213,8 @@ public class Level: MonoBehaviour
         transform.position = new Vector2(-gridSize.x / 2 + spacing / 2, -(gridSize.y / 2 - spacing / 2));
     }
 
-    private void RemoveClusters()
+    private void ReInitClusterTiles()
     {
-        // Re-Init all tiles in the cluster
         foreach (Cluster cluster in clusters)
         {
             for (int i = 0; i < cluster.length; i++)

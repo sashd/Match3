@@ -7,7 +7,6 @@ public class TileElement : MonoBehaviour
 {
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private float moveSpeed;
-
     public TileType Type { get; set; }
 
     [HideInInspector]
@@ -18,8 +17,6 @@ public class TileElement : MonoBehaviour
     private Animator animator;
 
     public static event Action<int, int> OnElementClick;
-
-
 
     public void Init(TileElementData data, int x, int y)
     {
@@ -62,18 +59,10 @@ public class TileElement : MonoBehaviour
         indices.y = y;
     }
 
-    public void Highlight(bool on)
+    public void Hint()
     {
-        if (on)
-        {
-            spriteRenderer.color = Color.blue;
-        }
-        else
-        {
-            spriteRenderer.color = Color.white;
-        }
+        animator.SetTrigger("Hint");
     }
-
 
     private void OnMouseDown()
     {
@@ -81,6 +70,5 @@ public class TileElement : MonoBehaviour
             return;
 
         OnElementClick?.Invoke(indices.x, indices.y);
-        //Highlight(true);
     }
 }

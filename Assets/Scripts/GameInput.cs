@@ -16,6 +16,9 @@ public class GameInput : MonoBehaviour
 
     private void OnTileClick(int x, int y)
     {
+        if (PauseMenu.isPaused)
+            return;
+
         if (clickCount == 0)
         {
             move.from = new Vector2Int(x, y);
@@ -26,7 +29,7 @@ public class GameInput : MonoBehaviour
             move.to = new Vector2Int(x, y);
             clickCount = 0;
 
-            // if the tiles are adjacent
+            // Check if the tiles are not adjacent
             Vector2Int dif = move.to - move.from;
             if (dif.magnitude == 1)
             {

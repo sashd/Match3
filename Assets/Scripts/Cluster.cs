@@ -1,4 +1,3 @@
-
 namespace Clusters
 {
     public struct Cluster

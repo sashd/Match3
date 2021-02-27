@@ -48,6 +48,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spriteRenderer: {fileID: 8111084839580125706}
   moveSpeed: 12
+  highlightColor: {r: 0.3764706, g: 0.9137255, b: 0.48523864, a: 1}
   indices: {x: 0, y: 0}
 --- !u!212 &8111084839580125706
 SpriteRenderer:
