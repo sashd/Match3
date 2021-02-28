@@ -1,9 +1,5 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using Moves;
 
 public class GameManager : MonoBehaviour
 {
@@ -18,23 +14,17 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameInput input;
 
     [Header("Game settings")]
-    [Min(1f)]
-    [SerializeField] private float hintTime = 3f;
-
-    [Space]
-    [Min(3)]
-    [SerializeField] private int targetScore = 40;
-    [Min(0f)]
-    [SerializeField] private float timeLimit = 60f;
-    [Min(1)]
-    [SerializeField] private int movesLimit = 10;
+    [Min(1f)] [SerializeField] private float hintTime = 3f;
+    [Min(0f)] [SerializeField] private float timeLimit = 60f;
+    [Min(3)]  [SerializeField] private int targetScore = 40;
+    [Min(1)]  [SerializeField] private int movesLimit = 10;
 
     private GameState gameState;
     private int   currentScore = 0;
     private int   currentMoves = 0;
     private float currentGameTime = 0f;
     private float currentHintTime = 0f;
-    private bool givingHint;
+    private bool  hintGiven;
 
     public static event Action<int> OnScoreChange;
 
@@ -71,7 +61,6 @@ public class GameManager : MonoBehaviour
         if (currentGameTime > timeLimit)
         {
             GameLost();
-            return;
         }
     }
 
@@ -83,7 +72,7 @@ public class GameManager : MonoBehaviour
         StartCoroutine(level.MakeMove(move));
         gameState = GameState.Moving;
         currentMoves++;
-        givingHint = false;
+        hintGiven = false;
     }
 
     private void OnMatchBreak(int tilesCount)
@@ -114,13 +103,13 @@ public class GameManager : MonoBehaviour
 
     private void GiveHint()
     {
-        if (givingHint)
+        if (hintGiven)
             return;
 
-        level.GetHint();
+        level.ShowHint();
 
-        givingHint = true;
-        Debug.Log("Give a hint");
+        hintGiven = true;
+        Debug.Log("Hint just given");
     }
 
     private void GameWon()

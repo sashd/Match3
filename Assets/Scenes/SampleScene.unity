@@ -214,8 +214,6 @@ GameObject:
   - component: {fileID: 97135313}
   - component: {fileID: 97135312}
   - component: {fileID: 97135311}
-  - component: {fileID: 97135315}
-  - component: {fileID: 97135316}
   m_Layer: 5
   m_Name: UI Canvas
   m_TagString: Untagged
@@ -306,32 +304,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &97135315
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 97135310}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2a52a8bd812dcd34ca3ec371bc4d6801, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  scoreText: {fileID: 310089764}
---- !u!114 &97135316
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 97135310}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 60ac203270d1b1548b1c20fec2348b9a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  pauseMenu: {fileID: 1640365071}
 --- !u!1 &243493738
 GameObject:
   m_ObjectHideFlags: 0
@@ -415,7 +387,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 97135316}
+      - m_Target: {fileID: 1640365075}
         m_TargetAssemblyTypeName: PauseMenu, Assembly-CSharp
         m_MethodName: Restart
         m_Mode: 1
@@ -476,6 +448,7 @@ GameObject:
   - component: {fileID: 310089763}
   - component: {fileID: 310089765}
   - component: {fileID: 310089764}
+  - component: {fileID: 310089766}
   m_Layer: 5
   m_Name: ScoreText
   m_TagString: Untagged
@@ -544,6 +517,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 310089762}
   m_CullTransparentMesh: 1
+--- !u!114 &310089766
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 310089762}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a52a8bd812dcd34ca3ec371bc4d6801, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &334619225
 GameObject:
   m_ObjectHideFlags: 0
@@ -693,7 +678,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 97135316}
+      - m_Target: {fileID: 1640365075}
         m_TargetAssemblyTypeName: PauseMenu, Assembly-CSharp
         m_MethodName: Mute
         m_Mode: 1
@@ -1117,7 +1102,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 97135316}
+      - m_Target: {fileID: 1640365075}
         m_TargetAssemblyTypeName: PauseMenu, Assembly-CSharp
         m_MethodName: Resume
         m_Mode: 1
@@ -1336,7 +1321,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 97135316}
+      - m_Target: {fileID: 1640365075}
         m_TargetAssemblyTypeName: PauseMenu, Assembly-CSharp
         m_MethodName: Pause
         m_Mode: 1
@@ -1552,8 +1537,8 @@ MonoBehaviour:
   level: {fileID: 1223730332}
   input: {fileID: 787135609}
   hintTime: 3
-  targetScore: 50
   timeLimit: 60
+  targetScore: 50
   movesLimit: 5
 --- !u!4 &1464547435
 Transform:
@@ -1580,6 +1565,7 @@ GameObject:
   - component: {fileID: 1640365072}
   - component: {fileID: 1640365074}
   - component: {fileID: 1640365073}
+  - component: {fileID: 1640365075}
   m_Layer: 5
   m_Name: PauseMenu
   m_TagString: Untagged
@@ -1647,3 +1633,15 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1640365071}
   m_CullTransparentMesh: 1
+--- !u!114 &1640365075
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1640365071}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60ac203270d1b1548b1c20fec2348b9a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

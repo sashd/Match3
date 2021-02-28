@@ -1,13 +1,15 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(Text))]
 public class ScoreUpdater : MonoBehaviour
 {
-    [SerializeField] private Text scoreText;
+    private Text scoreText;
 
     private void Start()
     {
-        GameManager.OnScoreChange += UpdateText;
+        scoreText = GetComponent<Text>();
+        GameManager.OnScoreChange += UpdateText;        
     }
 
     private void UpdateText(int value)
@@ -20,6 +22,9 @@ public class ScoreUpdater : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (scoreText == null)
+            return;
+
         GameManager.OnScoreChange -= UpdateText;
     }
 }

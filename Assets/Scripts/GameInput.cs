@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using Moves;
 
 public class GameInput : MonoBehaviour
 {
@@ -31,7 +30,7 @@ public class GameInput : MonoBehaviour
 
             // Check if the tiles are not adjacent
             Vector2Int dif = move.to - move.from;
-            if (dif.magnitude == 1)
+            if (Mathf.Approximately(dif.magnitude, 1f))
             {
                 OnMoveMade?.Invoke(move);
             }

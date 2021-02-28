@@ -1,15 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public enum TileType
 {
-    empty,
-    apple,
-    milk,
-    greenGuy,
-    orange,
-    bread
+    Empty,
+    Apple,
+    Milk,
+    GreenGuy,
+    Orange,
+    Bread
 }
 
 [CreateAssetMenu(fileName = "New Tile Element", menuName = "Tile Element")]

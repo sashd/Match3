@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Matches;
-using Moves;
 using System;
 
 public class Level: MonoBehaviour
@@ -10,24 +8,18 @@ public class Level: MonoBehaviour
     private const int maxSize = 10;
 
     [Header("Level Size")]
-    [Range(3, maxSize)]
-    [SerializeField] private int width = 5;
+    [Range(3, maxSize)] [SerializeField] private int width = 5;
+    [Range(3, maxSize)] [SerializeField] private int height = 5;
 
-    [Range(3, maxSize)]
-    [SerializeField] private int height = 5;
-
-    [Range(0.7f, 1.2f)]
-    [SerializeField] public float spacing = 0.9f;
+    [Range(0.7f, 1.2f)] [SerializeField] public float spacing = 0.9f;
 
     [Header("Tiles on level")]
     [SerializeField] private GameObject tilePrefab;
     [SerializeField] private TileElementData[] tileElements;
 
     [Header("Timings")]
-    [Min(0.1f)]
-    [SerializeField] private float timeBeforeBreak = 0.2f;
-    [Min(0.1f)]
-    [SerializeField] private float timeBeforeGenerate = 0.2f;
+    [Min(0.1f)] [SerializeField] private float timeBeforeBreak = 0.2f;
+    [Min(0.1f)] [SerializeField] private float timeBeforeGenerate = 0.2f;
 
     public event Action OnReadyToMakeMove;
     public event Action<int> OnMatchBreak;
@@ -73,7 +65,7 @@ public class Level: MonoBehaviour
         }
     }
 
-    public void GetHint()
+    public void ShowHint()
     {
         FindMoves();
         if (moves.Count > 0)
@@ -146,7 +138,7 @@ public class Level: MonoBehaviour
                 }
                 else
                 {
-                    if (tiles[i, j].Type == tiles[i + 1, j].Type && tiles[i, j].Type != TileType.empty)
+                    if (tiles[i, j].Type == tiles[i + 1, j].Type && tiles[i, j].Type != TileType.Empty)
                     {
                         matchLength += 1;
                     }
@@ -180,7 +172,7 @@ public class Level: MonoBehaviour
                 }
                 else
                 {
-                    if (tiles[i, j].Type == tiles[i, j + 1].Type && tiles[i, j].Type != TileType.empty)
+                    if (tiles[i, j].Type == tiles[i, j + 1].Type && tiles[i, j].Type != TileType.Empty)
                     {
                         matchLength += 1;
                     }
@@ -302,7 +294,7 @@ public class Level: MonoBehaviour
         {
             for (int j = 0; j < height; j++)
             {
-                if (tiles[i, j].Type == TileType.empty)
+                if (tiles[i, j].Type == TileType.Empty)
                 {
                     emptyCount++;
                 }
@@ -335,7 +327,7 @@ public class Level: MonoBehaviour
         {
             for (int j = 0; j < height; j++)
             {
-                if (tiles[i, j].Type == TileType.empty)
+                if (tiles[i, j].Type == TileType.Empty)
                 {
                     RandomInit(tiles[i, j], i, j);
                 }

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using System;
 
@@ -9,8 +7,7 @@ public class TileElement : MonoBehaviour
     [SerializeField] private float moveSpeed;
     public TileType Type { get; set; }
 
-    [HideInInspector]
-    public Vector2Int indices;
+    [HideInInspector] public Vector2Int indices;
     public bool Moving { get; private set; }
 
     private Vector3 target;
@@ -18,16 +15,18 @@ public class TileElement : MonoBehaviour
 
     public static event Action<int, int> OnElementClick;
 
+    private static readonly int appearTrigger = Animator.StringToHash("Appear");
+    private static readonly int hintTrigger = Animator.StringToHash("Hint");
+
     public void Init(TileElementData data, int x, int y)
     {
         animator = GetComponent<Animator>();
-
         spriteRenderer.sprite = data.sprite;
         spriteRenderer.color = Color.white;
-        animator.SetTrigger("Appear");
-
         Type = data.type;
         indices = new Vector2Int(x, y);
+
+        animator.SetTrigger(appearTrigger);
     }
 
     private void Update()
@@ -44,7 +43,7 @@ public class TileElement : MonoBehaviour
 
     public void SetEmpty()
     {
-        Type = TileType.empty;
+        Type = TileType.Empty;
         // Set Sprite alpha to 0
         spriteRenderer.color = Color.clear;
     }
@@ -61,12 +60,12 @@ public class TileElement : MonoBehaviour
 
     public void Hint()
     {
-        animator.SetTrigger("Hint");
+        animator.SetTrigger(hintTrigger);
     }
 
     private void OnMouseDown()
     {
-        if (Type == TileType.empty)
+        if (Type == TileType.Empty)
             return;
 
         OnElementClick?.Invoke(indices.x, indices.y);
