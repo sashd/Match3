@@ -28,7 +28,7 @@ public class GameInput : MonoBehaviour
             move.to = new Vector2Int(x, y);
             clickCount = 0;
 
-            // Check if the tiles are not adjacent
+            // Check if the tiles are neighbours
             Vector2Int dif = move.to - move.from;
             if (Mathf.Approximately(dif.magnitude, 1f))
             {

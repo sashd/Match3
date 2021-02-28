@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -25,6 +26,7 @@ public class GameManager : MonoBehaviour
     private float currentGameTime = 0f;
     private float currentHintTime = 0f;
     private bool  hintGiven;
+    private bool  gameWon = false;
 
     public static event Action<int> OnScoreChange;
 
@@ -91,7 +93,7 @@ public class GameManager : MonoBehaviour
 
     private void OnReadyToMakeMove()
     {
-        if (currentMoves > movesLimit)
+        if (currentMoves >= movesLimit)
         {
             GameLost();
             return;
@@ -109,18 +111,16 @@ public class GameManager : MonoBehaviour
         level.ShowHint();
 
         hintGiven = true;
-        Debug.Log("Hint just given");
     }
 
     private void GameWon()
     {
-        Debug.Log("You are win");
         gameState = GameState.GameOver;
+        gameWon = true;
     }
 
     private void GameLost()
     {
-        Debug.Log("Game over");
         gameState = GameState.GameOver;
     }
 
@@ -131,4 +131,24 @@ public class GameManager : MonoBehaviour
         input.OnMoveMade -= MakeMove;
     }
 
+    // FOR TESTING
+    GUIStyle style = new GUIStyle();
+    StringBuilder debugInfo = new StringBuilder(20);
+    private void OnGUI()
+    {
+        style.fontSize = 48;
+        if (gameWon)
+        {
+            debugInfo.AppendLine($"You are win!");
+        }
+        else
+        {
+            debugInfo.AppendLine($"Game state: {gameState}");
+            debugInfo.AppendLine($"Target score: {targetScore}");
+            debugInfo.AppendLine($"Time left: {Mathf.Ceil(timeLimit - currentGameTime)}");
+            debugInfo.AppendLine($"Moves left: {movesLimit - currentMoves}");
+        }
+        GUI.Label(new Rect(10, 10, 100, 20), debugInfo.ToString(), style);
+        debugInfo.Clear();
+    }
 }
